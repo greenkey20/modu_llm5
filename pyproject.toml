@@ -1,3 +1,12 @@
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 의존성 관리 정보
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+# 환경: Intel Mac (macOS 13), Python 3.11
+# 주의: 일부 패키지는 Intel Mac 제약으로 버전 고정됨
+#
+# 📖 자세한 내용은 docs/DEPENDENCIES.md 참조
+# ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
 [project]
 name = "001-chatbot"
 version = "0.1.0"
@@ -17,32 +26,31 @@ dependencies = [
     "python-dotenv>=1.2.1",
     "scikit-learn>=1.8.0",
     "seaborn>=0.13.2",
-
     # === ML Stack (Intel Mac 제약) ===
-    "torch==2.2.2",
-    "sentence-transformers==2.2.2",
-    "transformers>=4.30,<4.40",
-    "onnxruntime<1.17",
-
+    # ⚠️ 업데이트 금지: Intel Mac 호환성 유지 필요
+    "torch==2.2.2",                    # 2.3+ macOS 13 미지원
+    "sentence-transformers==2.2.2",    # 2.6+ torch 2.3+ 요구
+    "transformers>=4.30,<4.40",        # 4.40+ torch 2.3+ 요구
+    "onnxruntime<1.17",                # 1.17+ macOS 13 메모리 이슈
     # === 버전 고정 (충돌 방지) ===
-    "huggingface-hub==0.19.4",  # ⭐ 정확한 버전 고정
-    "pillow>=8.0,<11.0",
-
+    "huggingface-hub==0.19.4",         # sentence-transformers 2.2.2 의존성
+    "pillow>=8.0,<11.0",               # 11.0 API 변경
     # === UI Framework ===
     "gradio>=4.0,<5.0",
     "gradio-pdf>=0.0.20,<0.0.24",
-
     # === LangChain ===
     "langchain>=1.2.8",
     "langchain-chroma>=1.1.0",
-    "langchain-community>=0.4.1",
+    "langchain-community>=0.4.1",       # HuggingFaceEmbeddings 포함 (langchain-huggingface 대체)
     "langchain-openai>=1.1.7",
-    "langchain-google-genai>=2.0,<3.0",  # ⭐ 4.2.0 → 2.x
-
+    "langchain-google-genai>=2.0,<3.0", # 4.x 의존성 충돌
+    "langchain-ollama>=1.0.1",
     # === RAG ===
     "pypdf>=6.7.0",
     "jq>=1.11.0",
     "pymupdf>=1.27.1",
     "tokenizers>=0.15.2",
-    "langchain-ollama>=1.0.1",
+    "faiss-cpu<1.8",                    # 1.8+ macOS 14+ 전용
+    "langchain-pinecone>=0.2.13",
+    "pinecone-notebooks>=0.1.1",
 ]

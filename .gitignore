@@ -9,3 +9,9 @@ wheels/
 # Virtual environments
 .venv
 .env
+
+# Vector store data (재생성 가능한 바이너리 - 노트북 재실행으로 복원)
+chroma_db/
+faiss_*_index/
+*.faiss
+*.pkl
