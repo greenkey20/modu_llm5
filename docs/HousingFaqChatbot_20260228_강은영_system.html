@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Housing FAQ RAG Architecture</title>
+    <title>Housing FAQ Agentic RAG Architecture</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -17,22 +17,27 @@
             background: rgba(30, 41, 59, 0.7);
             backdrop-filter: blur(10px);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: transform 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .glass-card:hover {
             transform: translateY(-5px);
             border-color: rgba(96, 165, 250, 0.5);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
         }
         .flow-arrow {
-            color: #64748b;
-            font-size: 1.5rem;
+            color: #475569;
+            font-size: 1.2rem;
         }
         .node-tag {
-            font-size: 0.7rem;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: bold;
+            font-size: 0.65rem;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-weight: 800;
             text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .database-glow {
+            filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.4));
         }
     </style>
 </head>
@@ -40,136 +45,104 @@
 
     <!-- Header Section -->
     <header class="text-center mb-16">
-        <p class="text-blue-400 font-bold tracking-widest text-sm mb-2 uppercase">System Architecture</p>
+        <p class="text-blue-400 font-bold tracking-widest text-sm mb-2 uppercase">Advanced Agentic RAG System</p>
         <h1 class="text-4xl lg:text-5xl font-extrabold text-white mb-4">
-            주택청약 FAQ <span class="text-blue-500">RAG 아키텍처</span>
+            주택청약 FAQ <span class="text-blue-500">에이전트 아키텍처</span>
         </h1>
-        <p class="text-slate-400 text-lg">
-            Data → Metadata Filter → Embedding → Retrieval → Eval & Chain
+        <p class="text-slate-400 text-lg max-w-2xl mx-auto">
+            SQLite 영구 저장소와 LLM 기반 자동 요약 기능이 결합된 <br class="hidden md:block">지능형 도구 기반 에이전트 시스템
         </p>
     </header>
 
     <!-- Main Architecture Flow -->
-    <div class="flex flex-wrap justify-center items-start gap-6 mb-20">
+    <div class="flex flex-wrap justify-center items-stretch gap-6 mb-20">
         
         <!-- 01. Data -->
-        <div class="flex flex-col items-center group">
-            <div class="glass-card w-64 p-6 rounded-2xl relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-1 h-full bg-yellow-500"></div>
+        <div class="flex flex-col group">
+            <div class="glass-card w-64 p-6 rounded-2xl h-full relative overflow-hidden border-t-4 border-yellow-500">
                 <div class="flex justify-between items-center mb-4">
-                    <span class="node-tag bg-yellow-500/20 text-yellow-500">01 DATA</span>
-                    <i class="fa-solid fa-folder-open text-yellow-500 text-xl"></i>
+                    <span class="node-tag bg-yellow-500/20 text-yellow-500">01 KNOWLEDGE</span>
+                    <i class="fa-solid fa-file-lines text-yellow-500 text-xl"></i>
                 </div>
-                <h3 class="text-lg font-bold mb-3 text-white">데이터 소스</h3>
+                <h3 class="text-lg font-bold mb-3 text-white">지식 베이스</h3>
                 <div class="space-y-2">
                     <div class="bg-slate-800/50 p-2 rounded text-xs border border-slate-700">
-                        <p class="text-blue-300">housing_faq_formatted.json</p>
-                        <p class="text-slate-500 mt-1">FAQ 지식 베이스</p>
+                        <p class="text-yellow-200">housing_faq_formatted.json</p>
+                        <p class="text-slate-500 mt-1">FAQ 구조화 데이터</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="hidden lg:flex items-center h-48">
+        <div class="hidden xl:flex items-center">
             <i class="fa-solid fa-chevron-right flow-arrow"></i>
         </div>
 
-        <!-- 02. Metadata -->
-        <div class="flex flex-col items-center group">
-            <div class="glass-card w-64 p-6 rounded-2xl relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-1 h-full bg-orange-500"></div>
+        <!-- 02. Retrieval Tool -->
+        <div class="flex flex-col group">
+            <div class="glass-card w-64 p-6 rounded-2xl h-full relative overflow-hidden border-t-4 border-blue-500">
                 <div class="flex justify-between items-center mb-4">
-                    <span class="node-tag bg-orange-500/20 text-orange-500">02 FILTER</span>
-                    <i class="fa-solid fa-filter text-orange-500 text-xl"></i>
+                    <span class="node-tag bg-blue-500/20 text-blue-500">02 TOOL</span>
+                    <i class="fa-solid fa-wrench text-blue-500 text-xl"></i>
                 </div>
-                <h3 class="text-lg font-bold mb-3 text-white">메타데이터 필터</h3>
+                <h3 class="text-lg font-bold mb-3 text-white">검색 도구</h3>
                 <div class="space-y-2">
                     <div class="bg-slate-800/50 p-2 rounded text-xs border border-slate-700">
-                        <p class="text-orange-300">MetadataFilter (Pydantic)</p>
-                        <p class="text-slate-400 mt-1">keyword, question_id</p>
+                        <p class="text-blue-300">search_housing_faq (@tool)</p>
                     </div>
                     <div class="bg-slate-800/50 p-2 rounded text-xs border border-slate-700">
-                        <p class="text-orange-300">LLM Filter Chain</p>
-                        <p class="text-slate-400 mt-1">사용자 쿼리 분석</p>
+                        <p class="text-orange-400 font-bold">Metadata Filtering</p>
+                        <p class="text-slate-500 mt-1">Chroma DB 연동</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="hidden lg:flex items-center h-48">
+        <div class="hidden xl:flex items-center">
             <i class="fa-solid fa-chevron-right flow-arrow"></i>
         </div>
 
-        <!-- 03. Embedding -->
-        <div class="flex flex-col items-center group">
-            <div class="glass-card w-64 p-6 rounded-2xl relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-1 h-full bg-teal-500"></div>
+        <!-- 03. Agent Logic -->
+        <div class="flex flex-col group">
+            <div class="glass-card w-64 p-6 rounded-2xl h-full relative overflow-hidden border-t-4 border-purple-500">
                 <div class="flex justify-between items-center mb-4">
-                    <span class="node-tag bg-teal-500/20 text-teal-500">03 EMBED</span>
-                    <i class="fa-solid fa-dna text-teal-500 text-xl"></i>
+                    <span class="node-tag bg-purple-500/20 text-purple-500">03 AGENT</span>
+                    <i class="fa-solid fa-robot text-purple-500 text-xl"></i>
                 </div>
-                <h3 class="text-lg font-bold mb-3 text-white">임베딩 모델</h3>
+                <h3 class="text-lg font-bold mb-3 text-white">에이전트 엔진</h3>
                 <div class="space-y-2">
                     <div class="bg-slate-800/50 p-2 rounded text-xs border border-slate-700">
-                        <p class="text-teal-300">OpenAI text-embedding-3</p>
+                        <p class="text-purple-300">create_agent (LangChain)</p>
+                        <p class="text-slate-500 mt-1">Tool-use Reasoning</p>
                     </div>
                     <div class="bg-slate-800/50 p-2 rounded text-xs border border-slate-700">
-                        <p class="text-teal-300">BAAI/bge-m3 (HF)</p>
-                    </div>
-                    <div class="bg-slate-800/50 p-2 rounded text-xs border border-slate-700">
-                        <p class="text-teal-300">Ollama bge-m3</p>
+                        <p class="text-pink-300">InMemorySaver</p>
+                        <p class="text-slate-500 mt-1">Checkpointer (State)</p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="hidden lg:flex items-center h-48">
+        <div class="hidden xl:flex items-center">
             <i class="fa-solid fa-chevron-right flow-arrow"></i>
         </div>
 
-        <!-- 04. Search -->
-        <div class="flex flex-col items-center group">
-            <div class="glass-card w-64 p-6 rounded-2xl relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+        <!-- 04. Persistent History -->
+        <div class="flex flex-col group">
+            <div class="glass-card w-64 p-6 rounded-2xl h-full relative overflow-hidden border-t-4 border-green-500">
                 <div class="flex justify-between items-center mb-4">
-                    <span class="node-tag bg-blue-500/20 text-blue-500">04 SEARCH</span>
-                    <i class="fa-solid fa-magnifying-glass text-blue-500 text-xl"></i>
+                    <span class="node-tag bg-green-500/20 text-green-500">04 HISTORY</span>
+                    <i class="fa-solid fa-database text-green-500 text-xl database-glow"></i>
                 </div>
-                <h3 class="text-lg font-bold mb-3 text-white">벡터 스토어</h3>
+                <h3 class="text-lg font-bold mb-3 text-white">영구 대화 이력</h3>
                 <div class="space-y-2">
                     <div class="bg-slate-800/50 p-2 rounded text-xs border border-slate-700">
-                        <p class="text-blue-300">Chroma / FAISS</p>
-                        <p class="text-slate-400 mt-1">Similarity / MMR</p>
+                        <p class="text-green-300">SummarizedSQLiteHistory</p>
+                        <p class="text-slate-500 mt-1">SQLite3 (chat_history_rag.db)</p>
                     </div>
                     <div class="bg-slate-800/50 p-2 rounded text-xs border border-slate-700">
-                        <p class="text-pink-400 font-bold">Document Relevance</p>
-                        <p class="text-slate-400 mt-1">LLM 기반 관련성 검증</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="hidden lg:flex items-center h-48">
-            <i class="fa-solid fa-chevron-right flow-arrow"></i>
-        </div>
-
-        <!-- 05. Chain -->
-        <div class="flex flex-col items-center group">
-            <div class="glass-card w-64 p-6 rounded-2xl relative overflow-hidden">
-                <div class="absolute top-0 left-0 w-1 h-full bg-purple-500"></div>
-                <div class="flex justify-between items-center mb-4">
-                    <span class="node-tag bg-purple-500/20 text-purple-500">05 CHAIN</span>
-                    <i class="fa-solid fa-gears text-purple-500 text-xl"></i>
-                </div>
-                <h3 class="text-lg font-bold mb-3 text-white">답변 및 평가</h3>
-                <div class="space-y-2">
-                    <div class="bg-slate-800/50 p-2 rounded text-xs border border-slate-700">
-                        <p class="text-purple-300">RAG Chain (Streaming)</p>
-                        <p class="text-slate-400 mt-1">Context + History (3)</p>
-                    </div>
-                    <div class="bg-slate-800/50 p-2 rounded text-xs border border-slate-700">
-                        <p class="text-green-400 font-bold">Quality Evaluation</p>
-                        <p class="text-slate-400 mt-1">답변 품질 자가 진단</p>
+                        <p class="text-cyan-400 font-bold">Auto Compression</p>
+                        <p class="text-slate-500 mt-1">Threshold: 6 Messages</p>
                     </div>
                 </div>
             </div>
@@ -177,67 +150,74 @@
 
     </div>
 
-    <!-- Detailed Process Section -->
+    <!-- Technical Deep Dive Section -->
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
         
-        <!-- Indexing Pipeline (Left) -->
+        <!-- Memory & History Pipeline (Left) -->
         <div class="glass-card p-8 rounded-3xl">
-            <div class="flex items-center gap-3 mb-6">
-                <i class="fa-solid fa-database text-blue-400 text-xl"></i>
-                <h2 class="text-xl font-bold text-white uppercase tracking-wider">인덱싱 파이프라인</h2>
+            <div class="flex items-center gap-3 mb-6 border-b border-slate-700 pb-4">
+                <i class="fa-solid fa-memory text-green-400 text-xl"></i>
+                <h2 class="text-xl font-bold text-white tracking-wide uppercase">영구 메모리 파이프라인</h2>
             </div>
-            <div class="space-y-4">
-                <div class="relative pl-8 border-l border-slate-700 pb-4">
-                    <div class="absolute -left-1.5 top-0 w-3 h-3 rounded-full bg-blue-500"></div>
-                    <p class="text-sm font-semibold text-blue-300">build_retriever.py</p>
-                    <p class="text-xs text-slate-400">FAQ JSON 로드 및 Document 객체화</p>
+            <div class="space-y-6">
+                <div>
+                    <h4 class="text-sm font-bold text-slate-300 mb-2 flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+                        SQLite3 영구 저장소
+                    </h4>
+                    <p class="text-xs text-slate-400 leading-relaxed ml-3.5">
+                        <code>session_id</code>(UUID)별 대화 이력을 로컬 DB에 보존합니다. Gradio의 <code>gr.State</code>를 통해 탭별 독립적인 세션이 보장됩니다.
+                    </p>
                 </div>
-                <div class="relative pl-8 border-l border-slate-700 pb-4">
-                    <div class="absolute -left-1.5 top-0 w-3 h-3 rounded-full bg-blue-500"></div>
-                    <p class="text-sm font-semibold text-blue-300">Embedding Logic</p>
-                    <p class="text-xs text-slate-400">OpenAI / HF / Ollama 모델 선택적 초기화</p>
-                </div>
-                <div class="relative pl-8 border-l border-slate-700">
-                    <div class="absolute -left-1.5 top-0 w-3 h-3 rounded-full bg-blue-500"></div>
-                    <p class="text-sm font-semibold text-blue-300">Vector Storage</p>
-                    <p class="text-xs text-slate-400">Chroma (Persist) 또는 FAISS에 데이터 보관</p>
+                <div>
+                    <h4 class="text-sm font-bold text-slate-300 mb-2 flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 bg-cyan-500 rounded-full"></span>
+                        LLM 기반 컨텍스트 압축
+                    </h4>
+                    <p class="text-xs text-slate-400 leading-relaxed ml-3.5">
+                        메시지가 6개를 넘어가면 <code>_summarize_and_compress</code> 로직이 작동하여 오래된 메시지를 하나의 <code>SystemMessage</code> 요약본으로 변환합니다.
+                    </p>
                 </div>
             </div>
         </div>
 
-        <!-- Query Pipeline (Right) -->
+        <!-- Agentic Reasoning Pipeline (Right) -->
         <div class="glass-card p-8 rounded-3xl">
-            <div class="flex items-center gap-3 mb-6">
-                <i class="fa-solid fa-bolt text-yellow-400 text-xl"></i>
-                <h2 class="text-xl font-bold text-white uppercase tracking-wider">쿼리 파이프라인</h2>
+            <div class="flex items-center gap-3 mb-6 border-b border-slate-700 pb-4">
+                <i class="fa-solid fa-brain text-purple-400 text-xl"></i>
+                <h2 class="text-xl font-bold text-white tracking-wide uppercase">에이전트 추론 파이프라인</h2>
             </div>
-            <div class="space-y-4">
-                <div class="relative pl-8 border-l border-slate-700 pb-4">
-                    <div class="absolute -left-1.5 top-0 w-3 h-3 rounded-full bg-yellow-500"></div>
-                    <p class="text-sm font-semibold text-yellow-300">metadata_extraction_chain</p>
-                    <p class="text-xs text-slate-400">질문에서 keyword와 ID 범위를 추출하여 필터링</p>
+            <div class="space-y-6">
+                <div>
+                    <h4 class="text-sm font-bold text-slate-300 mb-2 flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>
+                        RunnableWithMessageHistory
+                    </h4>
+                    <p class="text-xs text-slate-400 leading-relaxed ml-3.5">
+                        <code>MessagesPlaceholder</code>와 결합하여 프롬프트 내에 <code>history</code> 변수를 동적으로 주입하고, 대화가 끝난 후 이력을 자동으로 저장합니다.
+                    </p>
                 </div>
-                <div class="relative pl-8 border-l border-slate-700 pb-4">
-                    <div class="absolute -left-1.5 top-0 w-3 h-3 rounded-full bg-yellow-500"></div>
-                    <p class="text-sm font-semibold text-yellow-300">_check_relevance()</p>
-                    <p class="text-xs text-slate-400">검색된 문서가 정말 질문과 관련 있는지 LLM 검증</p>
-                </div>
-                <div class="relative pl-8 border-l border-slate-700">
-                    <div class="absolute -left-1.5 top-0 w-3 h-3 rounded-full bg-yellow-500"></div>
-                    <p class="text-sm font-semibold text-yellow-300">_evaluate_answer_quality()</p>
-                    <p class="text-xs text-slate-400">최종 답변의 충분성을 판단 후 불충분 시 폴백 출력</p>
+                <div>
+                    <h4 class="text-sm font-bold text-slate-300 mb-2 flex items-center gap-2">
+                        <span class="w-1.5 h-1.5 bg-pink-500 rounded-full"></span>
+                        Tool-use Framework
+                    </h4>
+                    <p class="text-xs text-slate-400 leading-relaxed ml-3.5">
+                        <code>create_agent</code>를 통해 LLM이 직접 <code>search_housing_faq</code> 도구를 호출할지 결정합니다. 이는 향후 계산기나 외부 API 연동 등 확장성이 매우 뛰어난 구조입니다.
+                    </p>
                 </div>
             </div>
         </div>
 
     </div>
 
-    <!-- Footer Stats -->
+    <!-- Bottom Metadata Section -->
     <footer class="mt-16 text-center border-t border-slate-800 pt-8">
-        <div class="flex justify-center gap-12 text-slate-500 text-sm">
-            <span><i class="fa-solid fa-comment-dots mr-2"></i>History: Max 3</span>
-            <span><i class="fa-solid fa-robot mr-2"></i>GPT-4.1-mini / nano</span>
-            <span><i class="fa-solid fa-code-branch mr-2"></i>Hybrid Search (Filter+Vector)</span>
+        <div class="flex flex-wrap justify-center gap-x-10 gap-y-4 text-slate-500 text-xs font-medium">
+            <span class="flex items-center gap-2"><i class="fa-solid fa-server"></i> DB: SQLite (chat_history_rag.db)</span>
+            <span class="flex items-center gap-2"><i class="fa-solid fa-scissors"></i> Summary: Threshold @6</span>
+            <span class="flex items-center gap-2"><i class="fa-solid fa-id-card"></i> Session: UUID4 via gr.State</span>
+            <span class="flex items-center gap-2"><i class="fa-solid fa-shield-halved"></i> Eval: LLM Self-Correction</span>
         </div>
     </footer>
 
