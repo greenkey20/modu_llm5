@@ -3,222 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Integrated Agentic RAG Architecture</title>
+    <title>Advanced RAG Runtime Architecture v3.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800&display=swap');
         body {
             font-family: 'Pretendard', sans-serif;
-            background-color: #0f172a;
+            background-color: #0b0f1a;
             color: #e2e8f0;
         }
-        .glass-card {
-            background: rgba(30, 41, 59, 0.7);
-            backdrop-filter: blur(10px);
+        .runtime-box {
+            background: rgba(23, 32, 53, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 1rem;
+        }
+        .process-node {
+            background: rgba(30, 41, 59, 0.5);
             border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
         }
-        .glass-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(96, 165, 250, 0.5);
+        .process-node:hover {
+            border-color: rgba(96, 165, 250, 0.4);
+            background: rgba(30, 41, 59, 0.8);
         }
-        .flow-arrow {
-            color: #475569;
-            font-size: 1.2rem;
-        }
-        .node-tag {
-            font-size: 0.65rem;
+        .status-tag {
+            font-size: 0.6rem;
             padding: 2px 8px;
             border-radius: 9999px;
             font-weight: 800;
             text-transform: uppercase;
         }
+        .flow-connector {
+            height: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #334155;
+        }
     </style>
 </head>
-<body class="p-8 lg:p-12">
+<body class="p-6 lg:p-12">
 
-    <!-- Header Section -->
-    <header class="text-center mb-12">
-        <p class="text-blue-400 font-bold tracking-widest text-sm mb-2 uppercase">Full Lifecycle Architecture</p>
-        <h1 class="text-4xl font-extrabold text-white mb-4">
-            주택청약 FAQ <span class="text-blue-500">통합 RAG 아키텍처</span>
-        </h1>
-        <p class="text-slate-400 text-md max-w-3xl mx-auto">
-            데이터 임베딩부터 벡터 저장, 지능형 필터링, 에이전트 추론, 그리고 SQLite 영구 이력 관리까지 포함된 전체 시스템 흐름도
+    <!-- Header -->
+    <header class="mb-10 border-b border-slate-800 pb-8">
+        <div class="flex items-center gap-3 mb-2">
+            <span class="bg-blue-600 text-white text-[10px] px-2 py-1 rounded font-black">RUNTIME MODEL v3.0</span>
+            <span class="text-slate-500 text-xs">Architectural Design for Housing FAQ RAG System</span>
+        </div>
+        <h1 class="text-3xl font-black text-white italic">RAG <span class="text-blue-500">SYSTEM BLUEPRINT</span></h1>
+        <p class="text-slate-400 mt-2 text-sm leading-relaxed">
+            동적 설정 반영, 2단계 검색(Reranking), 스트리밍 생성 및 사후 검증(Post-validation)을 포함한 실제 실행 흐름입니다.
         </p>
     </header>
 
-    <!-- Main 6-Step Architecture Flow -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4 mb-16">
+    <div class="grid grid-cols-1 xl:grid-cols-12 gap-8">
         
-        <!-- 01. Data & Metadata -->
-        <div class="glass-card p-5 rounded-2xl border-t-4 border-yellow-500 flex flex-col">
-            <div class="flex justify-between items-center mb-4">
-                <span class="node-tag bg-yellow-500/20 text-yellow-500">01 DATA</span>
-                <i class="fa-solid fa-database text-yellow-500"></i>
-            </div>
-            <h3 class="font-bold text-white mb-3">데이터 & 필터</h3>
-            <div class="space-y-2 text-[11px]">
-                <div class="bg-slate-800/80 p-2 rounded border border-slate-700">
-                    <p class="text-yellow-400">FAQ JSON Dataset</p>
+        <!-- Left: Static Initialization & Experimental -->
+        <div class="xl:col-span-3 space-y-6">
+            <div>
+                <h2 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">01. Initialization</h2>
+                <div class="runtime-box p-5 border-l-4 border-yellow-500">
+                    <h3 class="text-sm font-bold text-white mb-3">Knowledge Assets</h3>
+                    <div class="space-y-2">
+                        <div class="process-node p-3 rounded-lg">
+                            <p class="text-[10px] text-yellow-500 font-black">STATIC LOAD</p>
+                            <p class="text-xs text-slate-200">Chroma (Persisted)</p>
+                            <p class="text-[10px] text-slate-500 mt-1">./chroma_db 로드</p>
+                        </div>
+                        <div class="process-node p-3 rounded-lg">
+                            <p class="text-[10px] text-orange-500 font-black">ON-DEMAND LOAD</p>
+                            <p class="text-xs text-slate-200">FAISS (From JSON)</p>
+                        </div>
+                    </div>
                 </div>
-                <div class="bg-slate-800/80 p-2 rounded border border-slate-700">
-                    <p class="text-orange-400 font-bold">Metadata Extraction</p>
-                    <p class="text-slate-400">LLM Filter Chain</p>
+            </div>
+
+            <div>
+                <h2 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">Experimental Track</h2>
+                <div class="runtime-box p-5 border-l-4 border-purple-500 opacity-60 hover:opacity-100 transition-opacity">
+                    <h3 class="text-sm font-bold text-white mb-2 italic">Agentic Layer</h3>
+                    <div class="process-node p-3 rounded-lg bg-purple-500/5">
+                        <p class="text-xs text-purple-300 font-bold">create_agent()</p>
+                        <p class="text-[10px] text-slate-500 mt-1">Tools: search_housing_faq</p>
+                        <p class="text-[10px] text-slate-500 italic">State: InMemorySaver</p>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- 02. Embedding -->
-        <div class="glass-card p-5 rounded-2xl border-t-4 border-teal-500 flex flex-col">
-            <div class="flex justify-between items-center mb-4">
-                <span class="node-tag bg-teal-500/20 text-teal-500">02 EMBED</span>
-                <i class="fa-solid fa-dna text-teal-500"></i>
+        <!-- Middle: Dynamic Runtime Flow -->
+        <div class="xl:col-span-6 space-y-6">
+            
+            <!-- Config Stage: Dynamic Rebuild -->
+            <div class="runtime-box p-4 border-l-4 border-indigo-500 bg-indigo-500/5">
+                <div class="flex items-center justify-between mb-3">
+                    <h2 class="text-xs font-black text-indigo-400 uppercase tracking-widest">Config Orchestrator</h2>
+                    <span class="status-tag bg-indigo-500/20 text-indigo-400">Reactive</span>
+                </div>
+                <div class="flex items-center gap-3">
+                    <div class="process-node flex-1 p-2 text-center rounded">
+                        <p class="text-[10px] text-slate-400">Settings Change</p>
+                    </div>
+                    <i class="fa-solid fa-arrow-right text-slate-700"></i>
+                    <div class="process-node flex-1 p-2 text-center rounded border-indigo-500/40">
+                        <p class="text-[10px] text-white font-bold italic">update_retriever()</p>
+                    </div>
+                    <i class="fa-solid fa-arrow-right text-slate-700"></i>
+                    <div class="process-node flex-1 p-2 text-center rounded">
+                        <p class="text-[10px] text-slate-400">Chain Rebuild</p>
+                    </div>
+                </div>
             </div>
-            <h3 class="font-bold text-white mb-3">임베딩 모델</h3>
-            <div class="space-y-2 text-[11px]">
-                <div class="bg-slate-800/80 p-2 rounded border border-slate-700">
-                    <p class="text-teal-300">OpenAI 3-small</p>
+
+            <div class="flow-connector"><i class="fa-solid fa-circle-nodes"></i></div>
+
+            <!-- Query Pre-processing -->
+            <div class="runtime-box p-6 relative">
+                <div class="absolute -top-3 left-6 px-3 py-1 bg-blue-600 text-white text-[10px] font-black rounded-full">STAGE 1: QUERY ANALYSIS</div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="process-node p-3 rounded-lg">
+                        <p class="text-[10px] text-blue-400 font-bold mb-1">USER INPUT</p>
+                        <p class="text-xs text-slate-200">Query & Session ID</p>
+                    </div>
+                    <div class="process-node p-3 rounded-lg bg-blue-500/5">
+                        <p class="text-[10px] text-blue-400 font-bold mb-1">METADATA EXTRACT</p>
+                        <p class="text-xs text-slate-200">MetadataFilter Chain</p>
+                    </div>
                 </div>
-                <div class="bg-slate-800/80 p-2 rounded border border-slate-700">
-                    <p class="text-teal-300">BAAI/bge-m3 (HF)</p>
+            </div>
+
+            <div class="flow-connector"><i class="fa-solid fa-arrow-down"></i></div>
+
+            <!-- Two-Stage Retrieval -->
+            <div class="runtime-box p-6 relative">
+                <div class="absolute -top-3 left-6 px-3 py-1 bg-teal-600 text-white text-[10px] font-black rounded-full">STAGE 2: TWO-STAGE RETRIEVAL</div>
+                <div class="flex items-center gap-4">
+                    <div class="process-node flex-1 p-3 rounded-lg border-teal-500/40 text-center">
+                        <p class="text-[10px] text-teal-400 font-black">1st: RETRIEVER</p>
+                        <p class="text-xs text-slate-200">Vector Search (k=4)</p>
+                    </div>
+                    <div class="text-slate-700"><i class="fa-solid fa-forward"></i></div>
+                    <div class="process-node flex-1 p-3 rounded-lg border-emerald-500/40 text-center bg-emerald-500/5">
+                        <p class="text-[10px] text-emerald-400 font-black">2nd: RERANKER</p>
+                        <p class="text-xs text-slate-200">_check_relevance()</p>
+                        <p class="text-[9px] text-slate-500 mt-1">LLM Verification</p>
+                    </div>
                 </div>
-                <div class="bg-slate-800/80 p-2 rounded border border-slate-700">
-                    <p class="text-teal-300">Ollama bge-m3</p>
+            </div>
+
+            <div class="flow-connector"><i class="fa-solid fa-arrow-down"></i></div>
+
+            <!-- Generation & Post-Validation -->
+            <div class="runtime-box p-6 relative">
+                <div class="absolute -top-3 left-6 px-3 py-1 bg-red-600 text-white text-[10px] font-black rounded-full">STAGE 3: GENERATION & VALIDATION</div>
+                <div class="space-y-4">
+                    <div class="process-node p-4 rounded-xl border-red-500/30">
+                        <div class="flex justify-between items-center mb-2">
+                            <p class="text-[10px] text-red-400 font-black">STREAMING GENERATION</p>
+                            <span class="text-[9px] text-slate-500">RunnableWithMessageHistory</span>
+                        </div>
+                        <p class="text-xs text-slate-200 leading-relaxed italic">
+                            Context + Summarized History + LLM Chain Stream
+                        </p>
+                    </div>
+                    <div class="process-node p-4 rounded-xl bg-red-500/10 border-dashed border-red-500/50">
+                        <p class="text-[10px] text-orange-400 font-black mb-1 underline">POST-GENERATION VALIDATION</p>
+                        <p class="text-xs text-slate-200">_evaluate_answer_quality()</p>
+                        <p class="text-[10px] text-slate-400 mt-1 italic">
+                            → Sufficient: Output | Insufficient: Fallback Message
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- 03. Vector Store -->
-        <div class="glass-card p-5 rounded-2xl border-t-4 border-blue-500 flex flex-col">
-            <div class="flex justify-between items-center mb-4">
-                <span class="node-tag bg-blue-500/20 text-blue-500">03 STORAGE</span>
-                <i class="fa-solid fa-box-archive text-blue-500"></i>
-            </div>
-            <h3 class="font-bold text-white mb-3">벡터 스토어</h3>
-            <div class="space-y-2 text-[11px]">
-                <div class="bg-slate-800/80 p-2 rounded border border-slate-700">
-                    <p class="text-blue-300">Chroma (Persist)</p>
-                </div>
-                <div class="bg-slate-800/80 p-2 rounded border border-slate-700">
-                    <p class="text-blue-300">FAISS (Memory)</p>
-                </div>
-                <div class="bg-slate-800/80 p-2 rounded border border-slate-700">
-                    <p class="text-cyan-400 font-bold">Similarity / MMR</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- 04. Agent & Tool -->
-        <div class="glass-card p-5 rounded-2xl border-t-4 border-purple-500 flex flex-col">
-            <div class="flex justify-between items-center mb-4">
-                <span class="node-tag bg-purple-500/20 text-purple-500">04 AGENT</span>
-                <i class="fa-solid fa-robot text-purple-500"></i>
-            </div>
-            <h3 class="font-bold text-white mb-3">에이전트 추론</h3>
-            <div class="space-y-2 text-[11px]">
-                <div class="bg-slate-800/80 p-2 rounded border border-slate-700">
-                    <p class="text-purple-300">search_housing_faq (@tool)</p>
-                </div>
-                <div class="bg-slate-800/80 p-2 rounded border border-slate-700">
-                    <p class="text-purple-300">create_agent logic</p>
-                </div>
-                <div class="bg-slate-800/80 p-2 rounded border border-slate-700">
-                    <p class="text-pink-400 font-bold">Checkpointer</p>
-                    <p class="text-slate-400">InMemorySaver</p>
+        <!-- Right: Persistence (Sidecar) -->
+        <div class="xl:col-span-3 space-y-6">
+            <h2 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4">03. Persistence</h2>
+            <div class="runtime-box p-5 border-l-4 border-green-500">
+                <h3 class="text-sm font-bold text-white mb-4">Message History</h3>
+                <div class="space-y-4">
+                    <div class="process-node p-3 rounded-lg border-green-500/20">
+                        <p class="text-[10px] text-green-500 font-black">STORAGE</p>
+                        <p class="text-xs text-slate-200">SummarizedSQLiteHistory</p>
+                        <p class="text-[10px] text-slate-500">chat_history_rag.db</p>
+                    </div>
+                    <div class="process-node p-3 rounded-lg bg-cyan-500/5">
+                        <p class="text-[10px] text-cyan-400 font-black">COMPRESSION</p>
+                        <p class="text-xs text-slate-200">Auto Summarization</p>
+                        <p class="text-[10px] text-slate-500">Threshold: 6 Messages</p>
+                    </div>
                 </div>
             </div>
-        </div>
-
-        <!-- 05. SQLite History -->
-        <div class="glass-card p-5 rounded-2xl border-t-4 border-green-500 flex flex-col">
-            <div class="flex justify-between items-center mb-4">
-                <span class="node-tag bg-green-500/20 text-green-500">05 HISTORY</span>
-                <i class="fa-solid fa-database text-green-500"></i>
+            
+            <div class="p-4 bg-slate-900/50 rounded-xl border border-slate-800">
+                <p class="text-[10px] text-slate-600 uppercase font-black tracking-tighter mb-2">Technical Note</p>
+                <p class="text-[10px] text-slate-500 leading-relaxed italic">
+                    Quality Evaluation은 답변이 완전히 생성된(Full Answer) 후 시퀀스의 마지막 단계에서 수행되어 최종 출력 형태를 결정합니다.
+                </p>
             </div>
-            <h3 class="font-bold text-white mb-3">영구 이력 관리</h3>
-            <div class="space-y-2 text-[11px]">
-                <div class="bg-slate-800/80 p-2 rounded border border-slate-700">
-                    <p class="text-green-300">SQLite Message DB</p>
-                </div>
-                <div class="bg-slate-800/80 p-2 rounded border border-slate-700">
-                    <p class="text-green-300">Auto Summarization</p>
-                    <p class="text-slate-400">Threshold: 6 msgs</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- 06. Eval & Output -->
-        <div class="glass-card p-5 rounded-2xl border-t-4 border-red-500 flex flex-col">
-            <div class="flex justify-between items-center mb-4">
-                <span class="node-tag bg-red-500/20 text-red-500">06 EVAL</span>
-                <i class="fa-solid fa-square-check text-red-500"></i>
-            </div>
-            <h3 class="font-bold text-white mb-3">답변 및 평가</h3>
-            <div class="space-y-2 text-[11px]">
-                <div class="bg-slate-800/80 p-2 rounded border border-slate-700">
-                    <p class="text-red-300">AnswerQualityOutput</p>
-                </div>
-                <div class="bg-slate-800/80 p-2 rounded border border-slate-700">
-                    <p class="text-red-300">_check_relevance()</p>
-                </div>
-                <div class="bg-slate-800/80 p-2 rounded border border-slate-700">
-                    <p class="text-orange-400 font-bold">Streaming Response</p>
-                </div>
-            </div>
-        </div>
-
-    </div>
-
-    <!-- Sub-Process Detail -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
-        <!-- Indexing Pipeline -->
-        <div class="glass-card p-6 rounded-2xl">
-            <h2 class="text-lg font-bold text-white mb-4 border-b border-slate-700 pb-2 uppercase tracking-widest text-blue-400">Indexing Pipeline</h2>
-            <ul class="space-y-3 text-sm text-slate-300">
-                <li class="flex items-start gap-2">
-                    <span class="text-blue-500 mt-1">●</span>
-                    <div><strong>Data Loading:</strong> JSON 파일로부터 FAQ 문서를 읽어 Document 객체 생성</div>
-                </li>
-                <li class="flex items-start gap-2">
-                    <span class="text-blue-500 mt-1">●</span>
-                    <div><strong>Embedding:</strong> 선택된 모델(OpenAI/HF/Ollama)을 통한 벡터화</div>
-                </li>
-                <li class="flex items-start gap-2">
-                    <span class="text-blue-500 mt-1">●</span>
-                    <div><strong>Storage:</strong> Chroma DB에 메타데이터(keyword, question_id)와 함께 저장</div>
-                </li>
-            </ul>
-        </div>
-
-        <!-- Query & History Pipeline -->
-        <div class="glass-card p-6 rounded-2xl">
-            <h2 class="text-lg font-bold text-white mb-4 border-b border-slate-700 pb-2 uppercase tracking-widest text-green-400">Query & History Pipeline</h2>
-            <ul class="space-y-3 text-sm text-slate-300">
-                <li class="flex items-start gap-2">
-                    <span class="text-green-500 mt-1">●</span>
-                    <div><strong>Metadata Filter:</strong> LLM이 질문을 분석하여 Chroma 필터 조건 자동 생성</div>
-                </li>
-                <li class="flex items-start gap-2">
-                    <span class="text-green-500 mt-1">●</span>
-                    <div><strong>Persistence:</strong> SQLite에 대화 저장 및 임계값 도달 시 자동 요약 압축</div>
-                </li>
-                <li class="flex items-start gap-2">
-                    <span class="text-green-500 mt-1">●</span>
-                    <div><strong>Evaluation:</strong> 생성된 답변의 품질을 LLM이 자가 진단하여 신뢰성 확보</div>
-                </li>
-            </ul>
         </div>
     </div>
 
     <!-- Footer Meta -->
-    <footer class="mt-12 text-center text-slate-500 text-xs">
-        <div class="flex justify-center gap-8">
-            <span><i class="fa-solid fa-link mr-1"></i> LangChain 1.0 Ecosystem</span>
-            <span><i class="fa-solid fa-database mr-1"></i> Hybrid Retrieval Strategy</span>
-            <span><i class="fa-solid fa-clock-rotate-left mr-1"></i> SQLite Persistent State</span>
-        </div>
+    <footer class="mt-12 pt-6 border-t border-slate-800 flex justify-between items-center text-[10px] text-slate-600 font-bold uppercase tracking-widest">
+        <span>Architectural Integrity: High</span>
+        <span>Flow: Sequential + Sidecar Persistence</span>
+        <span>Version: 3.0 Stable</span>
     </footer>
 
 </body>
