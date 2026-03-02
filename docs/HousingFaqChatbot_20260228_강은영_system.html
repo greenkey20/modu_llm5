@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Housing FAQ RAG Architecture</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800&display=swap');
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #0f172a;
+            color: #e2e8f0;
+        }
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease;
+        }
+        .glass-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(96, 165, 250, 0.5);
+        }
+        .flow-arrow {
+            color: #64748b;
+            font-size: 1.5rem;
+        }
+        .node-tag {
+            font-size: 0.7rem;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body class="p-8 lg:p-16">
+
+    <!-- Header Section -->
+    <header class="text-center mb-16">
+        <p class="text-blue-400 font-bold tracking-widest text-sm mb-2 uppercase">System Architecture</p>
+        <h1 class="text-4xl lg:text-5xl font-extrabold text-white mb-4">
+            주택청약 FAQ <span class="text-blue-500">RAG 아키텍처</span>
+        </h1>
+        <p class="text-slate-400 text-lg">
+            Data → Metadata Filter → Embedding → Retrieval → Eval & Chain
+        </p>
+    </header>
+
+    <!-- Main Architecture Flow -->
+    <div class="flex flex-wrap justify-center items-start gap-6 mb-20">
+        
+        <!-- 01. Data -->
+        <div class="flex flex-col items-center group">
+            <div class="glass-card w-64 p-6 rounded-2xl relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-1 h-full bg-yellow-500"></div>
+                <div class="flex justify-between items-center mb-4">
+                    <span class="node-tag bg-yellow-500/20 text-yellow-500">01 DATA</span>
+                    <i class="fa-solid fa-folder-open text-yellow-500 text-xl"></i>
+                </div>
+                <h3 class="text-lg font-bold mb-3 text-white">데이터 소스</h3>
+                <div class="space-y-2">
+                    <div class="bg-slate-800/50 p-2 rounded text-xs border border-slate-700">
+                        <p class="text-blue-300">housing_faq_formatted.json</p>
+                        <p class="text-slate-500 mt-1">FAQ 지식 베이스</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="hidden lg:flex items-center h-48">
+            <i class="fa-solid fa-chevron-right flow-arrow"></i>
+        </div>
+
+        <!-- 02. Metadata -->
+        <div class="flex flex-col items-center group">
+            <div class="glass-card w-64 p-6 rounded-2xl relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-1 h-full bg-orange-500"></div>
+                <div class="flex justify-between items-center mb-4">
+                    <span class="node-tag bg-orange-500/20 text-orange-500">02 FILTER</span>
+                    <i class="fa-solid fa-filter text-orange-500 text-xl"></i>
+                </div>
+                <h3 class="text-lg font-bold mb-3 text-white">메타데이터 필터</h3>
+                <div class="space-y-2">
+                    <div class="bg-slate-800/50 p-2 rounded text-xs border border-slate-700">
+                        <p class="text-orange-300">MetadataFilter (Pydantic)</p>
+                        <p class="text-slate-400 mt-1">keyword, question_id</p>
+                    </div>
+                    <div class="bg-slate-800/50 p-2 rounded text-xs border border-slate-700">
+                        <p class="text-orange-300">LLM Filter Chain</p>
+                        <p class="text-slate-400 mt-1">사용자 쿼리 분석</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="hidden lg:flex items-center h-48">
+            <i class="fa-solid fa-chevron-right flow-arrow"></i>
+        </div>
+
+        <!-- 03. Embedding -->
+        <div class="flex flex-col items-center group">
+            <div class="glass-card w-64 p-6 rounded-2xl relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-1 h-full bg-teal-500"></div>
+                <div class="flex justify-between items-center mb-4">
+                    <span class="node-tag bg-teal-500/20 text-teal-500">03 EMBED</span>
+                    <i class="fa-solid fa-dna text-teal-500 text-xl"></i>
+                </div>
+                <h3 class="text-lg font-bold mb-3 text-white">임베딩 모델</h3>
+                <div class="space-y-2">
+                    <div class="bg-slate-800/50 p-2 rounded text-xs border border-slate-700">
+                        <p class="text-teal-300">OpenAI text-embedding-3</p>
+                    </div>
+                    <div class="bg-slate-800/50 p-2 rounded text-xs border border-slate-700">
+                        <p class="text-teal-300">BAAI/bge-m3 (HF)</p>
+                    </div>
+                    <div class="bg-slate-800/50 p-2 rounded text-xs border border-slate-700">
+                        <p class="text-teal-300">Ollama bge-m3</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="hidden lg:flex items-center h-48">
+            <i class="fa-solid fa-chevron-right flow-arrow"></i>
+        </div>
+
+        <!-- 04. Search -->
+        <div class="flex flex-col items-center group">
+            <div class="glass-card w-64 p-6 rounded-2xl relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-1 h-full bg-blue-500"></div>
+                <div class="flex justify-between items-center mb-4">
+                    <span class="node-tag bg-blue-500/20 text-blue-500">04 SEARCH</span>
+                    <i class="fa-solid fa-magnifying-glass text-blue-500 text-xl"></i>
+                </div>
+                <h3 class="text-lg font-bold mb-3 text-white">벡터 스토어</h3>
+                <div class="space-y-2">
+                    <div class="bg-slate-800/50 p-2 rounded text-xs border border-slate-700">
+                        <p class="text-blue-300">Chroma / FAISS</p>
+                        <p class="text-slate-400 mt-1">Similarity / MMR</p>
+                    </div>
+                    <div class="bg-slate-800/50 p-2 rounded text-xs border border-slate-700">
+                        <p class="text-pink-400 font-bold">Document Relevance</p>
+                        <p class="text-slate-400 mt-1">LLM 기반 관련성 검증</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="hidden lg:flex items-center h-48">
+            <i class="fa-solid fa-chevron-right flow-arrow"></i>
+        </div>
+
+        <!-- 05. Chain -->
+        <div class="flex flex-col items-center group">
+            <div class="glass-card w-64 p-6 rounded-2xl relative overflow-hidden">
+                <div class="absolute top-0 left-0 w-1 h-full bg-purple-500"></div>
+                <div class="flex justify-between items-center mb-4">
+                    <span class="node-tag bg-purple-500/20 text-purple-500">05 CHAIN</span>
+                    <i class="fa-solid fa-gears text-purple-500 text-xl"></i>
+                </div>
+                <h3 class="text-lg font-bold mb-3 text-white">답변 및 평가</h3>
+                <div class="space-y-2">
+                    <div class="bg-slate-800/50 p-2 rounded text-xs border border-slate-700">
+                        <p class="text-purple-300">RAG Chain (Streaming)</p>
+                        <p class="text-slate-400 mt-1">Context + History (3)</p>
+                    </div>
+                    <div class="bg-slate-800/50 p-2 rounded text-xs border border-slate-700">
+                        <p class="text-green-400 font-bold">Quality Evaluation</p>
+                        <p class="text-slate-400 mt-1">답변 품질 자가 진단</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Detailed Process Section -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+        
+        <!-- Indexing Pipeline (Left) -->
+        <div class="glass-card p-8 rounded-3xl">
+            <div class="flex items-center gap-3 mb-6">
+                <i class="fa-solid fa-database text-blue-400 text-xl"></i>
+                <h2 class="text-xl font-bold text-white uppercase tracking-wider">인덱싱 파이프라인</h2>
+            </div>
+            <div class="space-y-4">
+                <div class="relative pl-8 border-l border-slate-700 pb-4">
+                    <div class="absolute -left-1.5 top-0 w-3 h-3 rounded-full bg-blue-500"></div>
+                    <p class="text-sm font-semibold text-blue-300">build_retriever.py</p>
+                    <p class="text-xs text-slate-400">FAQ JSON 로드 및 Document 객체화</p>
+                </div>
+                <div class="relative pl-8 border-l border-slate-700 pb-4">
+                    <div class="absolute -left-1.5 top-0 w-3 h-3 rounded-full bg-blue-500"></div>
+                    <p class="text-sm font-semibold text-blue-300">Embedding Logic</p>
+                    <p class="text-xs text-slate-400">OpenAI / HF / Ollama 모델 선택적 초기화</p>
+                </div>
+                <div class="relative pl-8 border-l border-slate-700">
+                    <div class="absolute -left-1.5 top-0 w-3 h-3 rounded-full bg-blue-500"></div>
+                    <p class="text-sm font-semibold text-blue-300">Vector Storage</p>
+                    <p class="text-xs text-slate-400">Chroma (Persist) 또는 FAISS에 데이터 보관</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Query Pipeline (Right) -->
+        <div class="glass-card p-8 rounded-3xl">
+            <div class="flex items-center gap-3 mb-6">
+                <i class="fa-solid fa-bolt text-yellow-400 text-xl"></i>
+                <h2 class="text-xl font-bold text-white uppercase tracking-wider">쿼리 파이프라인</h2>
+            </div>
+            <div class="space-y-4">
+                <div class="relative pl-8 border-l border-slate-700 pb-4">
+                    <div class="absolute -left-1.5 top-0 w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <p class="text-sm font-semibold text-yellow-300">metadata_extraction_chain</p>
+                    <p class="text-xs text-slate-400">질문에서 keyword와 ID 범위를 추출하여 필터링</p>
+                </div>
+                <div class="relative pl-8 border-l border-slate-700 pb-4">
+                    <div class="absolute -left-1.5 top-0 w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <p class="text-sm font-semibold text-yellow-300">_check_relevance()</p>
+                    <p class="text-xs text-slate-400">검색된 문서가 정말 질문과 관련 있는지 LLM 검증</p>
+                </div>
+                <div class="relative pl-8 border-l border-slate-700">
+                    <div class="absolute -left-1.5 top-0 w-3 h-3 rounded-full bg-yellow-500"></div>
+                    <p class="text-sm font-semibold text-yellow-300">_evaluate_answer_quality()</p>
+                    <p class="text-xs text-slate-400">최종 답변의 충분성을 판단 후 불충분 시 폴백 출력</p>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Footer Stats -->
+    <footer class="mt-16 text-center border-t border-slate-800 pt-8">
+        <div class="flex justify-center gap-12 text-slate-500 text-sm">
+            <span><i class="fa-solid fa-comment-dots mr-2"></i>History: Max 3</span>
+            <span><i class="fa-solid fa-robot mr-2"></i>GPT-4.1-mini / nano</span>
+            <span><i class="fa-solid fa-code-branch mr-2"></i>Hybrid Search (Filter+Vector)</span>
+        </div>
+    </footer>
+
+</body>
+</html>
