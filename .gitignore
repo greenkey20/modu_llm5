@@ -10,6 +10,9 @@ wheels/
 .venv
 .env
 
+# Claude Code 로컬 설정 (개인 권한 설정 등 - 공유 불필요)
+.claude/
+
 # Vector store data (재생성 가능한 바이너리 - 노트북 재실행으로 복원)
 chroma_db/
 faiss_*_index/
