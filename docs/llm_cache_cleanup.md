@@ -48,14 +48,23 @@ rm -rf ~/.cache/huggingface/hub/<모델이름>
 ### 📦 pip 캐시
 
 ```bash
+# 캐시 크기 먼저 확인
+pip cache info
+
+# 삭제
 pip cache purge
 ```
+
+> 💡 `ERROR: No matching packages` → 정상! 이미 캐시가 비어있다는 의미 (실제 에러 아님)
 
 ### ⚡ uv 캐시 (Python 패키지 빌드 캐시)
 
 ```bash
 uv cache clean
 ```
+
+> 💡 `No cache found at: /Users/<username>/.cache/uv` → 정상! 이미 캐시가 없다는 의미  
+> 💡 uv 프로젝트 내부에서 실행해도 동일 결과면 캐시 없는 것
 
 ### 🪐 Jupyter 임시 파일
 
@@ -64,14 +73,36 @@ rm -rf ~/.local/share/jupyter/nbconvert/
 jupyter lab clean 2>/dev/null
 ```
 
-### 🦙 Ollama 모델 (주의: 재다운로드 필요)
+### 🦙 Ollama 모델 (주의: 재다운로드 필요, 모델당 수 GB)
 
 ```bash
+# Ollama 전체 크기 확인
+du -sh ~/.ollama 2>/dev/null
+
 # 모델 목록 확인
 ollama list
 
 # 필요없는 모델만 삭제
 ollama rm <모델이름>
+```
+
+### 🗑️ 기타 즉시 효과 있는 것들
+
+```bash
+# 휴지통 비우기 (수 GB 잡혀있을 수 있음)
+rm -rf ~/.Trash/*
+
+# 홈 디렉토리에서 큰 폴더 상위 10개 파악
+du -sh ~/* 2>/dev/null | sort -rh | head -10
+
+# 다운로드 폴더
+du -sh ~/Downloads
+
+# macOS 로컬 Time Machine 스냅샷 삭제 (자동 생성, 수 GB)
+sudo tmutil deletelocalsnapshots /
+
+# 현재 로컬 스냅샷 목록 확인
+tmutil listlocalsnapshots /
 ```
 
 ---
