@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Architecture: W3 vs W4</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;800&display=swap');
+        body {
+            font-family: 'Pretendard', sans-serif;
+            background-color: #0b0f1a;
+            color: #e2e8f0;
+        }
+        .card {
+            background: rgba(23, 32, 53, 0.8);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 1rem;
+        }
+        .node {
+            background: rgba(30, 41, 59, 0.5);
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+        }
+        .node:hover {
+            background: rgba(30, 41, 59, 0.85);
+        }
+        .badge-new {
+            font-size: 0.55rem;
+            padding: 1px 6px;
+            border-radius: 9999px;
+            font-weight: 900;
+            background: rgba(34,197,94,0.15);
+            color: #4ade80;
+            border: 1px solid rgba(34,197,94,0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .badge-improved {
+            font-size: 0.55rem;
+            padding: 1px 6px;
+            border-radius: 9999px;
+            font-weight: 900;
+            background: rgba(251,191,36,0.12);
+            color: #fbbf24;
+            border: 1px solid rgba(251,191,36,0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .badge-same {
+            font-size: 0.55rem;
+            padding: 1px 6px;
+            border-radius: 9999px;
+            font-weight: 900;
+            background: rgba(100,116,139,0.15);
+            color: #94a3b8;
+            border: 1px solid rgba(100,116,139,0.2);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .arrow { color: #334155; }
+        .stage-label-w3 {
+            font-size: 0.6rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #60a5fa;
+        }
+        .stage-label-w4 {
+            font-size: 0.6rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #34d399;
+        }
+        .divider {
+            height: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #1e293b;
+            font-size: 0.75rem;
+        }
+        .diff-highlight {
+            border-left: 3px solid #4ade80 !important;
+        }
+        .same-highlight {
+            border-left: 3px solid #475569 !important;
+        }
+        .section-header {
+            font-size: 0.65rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: #475569;
+            margin-bottom: 0.75rem;
+        }
+    </style>
+</head>
+<body class="p-6 lg:p-10">
+
+    <!-- Header -->
+    <header class="mb-10 border-b border-slate-800 pb-8">
+        <div class="flex items-center gap-3 mb-3">
+            <span class="bg-blue-700 text-white text-[10px] px-2 py-1 rounded font-black">W3</span>
+            <span class="text-slate-600 text-sm font-bold">vs</span>
+            <span class="bg-emerald-700 text-white text-[10px] px-2 py-1 rounded font-black">W4</span>
+            <span class="text-slate-500 text-xs ml-2">RAG Pipeline Comparison</span>
+        </div>
+        <h1 class="text-3xl font-black text-white">RAG <span class="text-blue-500">W3</span> <span class="text-slate-600">vs</span> <span class="text-emerald-400">W4</span> ARCHITECTURE</h1>
+        <p class="text-slate-400 mt-2 text-sm leading-relaxed max-w-3xl">
+            W3 Housing FAQ 챗봇과 W4 KTS Contextual Retrieval 시스템의 파이프라인 구조 비교.
+            핵심 차이는 <strong class="text-emerald-400">인덱싱 시점의 LLM 개입</strong>과 <strong class="text-emerald-400">Hybrid 검색 (BM25 + Embedding)</strong>의 도입입니다.
+        </p>
+        <!-- Legend -->
+        <div class="flex gap-4 mt-4">
+            <div class="flex items-center gap-2"><span class="badge-new">NEW</span><span class="text-xs text-slate-400">W4에서 새로 도입</span></div>
+            <div class="flex items-center gap-2"><span class="badge-improved">IMPROVED</span><span class="text-xs text-slate-400">W3 대비 개선</span></div>
+            <div class="flex items-center gap-2"><span class="badge-same">SAME</span><span class="text-xs text-slate-400">W3 계승</span></div>
+        </div>
+    </header>
+
+    <!-- Main Comparison Grid -->
+    <div class="grid grid-cols-1 xl:grid-cols-2 gap-8">
+
+        <!-- ══════════════════ W3 Column ══════════════════ -->
+        <div class="space-y-4">
+            <div class="flex items-center gap-3 mb-2">
+                <span class="bg-blue-700 text-white text-[10px] px-3 py-1 rounded-full font-black">W3</span>
+                <div>
+                    <p class="text-white font-bold text-sm">Housing FAQ RAG Chatbot</p>
+                    <p class="text-slate-500 text-xs">001_chatbot/homework · 2026.02.28</p>
+                </div>
+            </div>
+
+            <!-- W3: Indexing -->
+            <div class="card p-5 border-l-4 border-blue-600 same-highlight">
+                <p class="section-header">Stage 0 · Indexing (Offline)</p>
+                <div class="space-y-2">
+                    <div class="node p-3">
+                        <p class="stage-label-w3 mb-1">Document</p>
+                        <p class="text-xs text-slate-200">주택청약 FAQ (JSON)</p>
+                    </div>
+                    <div class="divider"><i class="fa-solid fa-arrow-down"></i></div>
+                    <div class="node p-3">
+                        <p class="stage-label-w3 mb-1">Chunking</p>
+                        <p class="text-xs text-slate-200">RecursiveCharacterTextSplitter</p>
+                    </div>
+                    <div class="divider"><i class="fa-solid fa-arrow-down"></i></div>
+                    <div class="node p-3">
+                        <p class="stage-label-w3 mb-1">Embedding</p>
+                        <p class="text-xs text-slate-200">고정 모델</p>
+                        <p class="text-[10px] text-slate-500 mt-1">→ Chroma (persisted) / FAISS</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- W3: Query -->
+            <div class="card p-5 border-l-4 border-blue-500">
+                <p class="section-header">Stage 1 · Query Pre-processing</p>
+                <div class="space-y-2">
+                    <div class="node p-3">
+                        <p class="stage-label-w3 mb-1">User Input</p>
+                        <p class="text-xs text-slate-200">Query + Session ID</p>
+                    </div>
+                    <div class="divider"><i class="fa-solid fa-arrow-down"></i></div>
+                    <div class="node p-3 bg-blue-500/5 border-blue-500/30">
+                        <div class="flex items-center justify-between mb-1">
+                            <p class="stage-label-w3">MetadataFilter Chain</p>
+                        </div>
+                        <p class="text-xs text-slate-200">LLM으로 주제 분류</p>
+                        <p class="text-[10px] text-slate-500 mt-1">→ 청약/대출/임대 등 필터 추출</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- W3: Retrieval -->
+            <div class="card p-5 border-l-4 border-teal-600">
+                <p class="section-header">Stage 2 · Two-Stage Retrieval</p>
+                <div class="space-y-2">
+                    <div class="node p-3">
+                        <p class="stage-label-w3 mb-1">1st: Vector Search</p>
+                        <p class="text-xs text-slate-200">Embedding 유사도 (k=4)</p>
+                        <p class="text-[10px] text-slate-500 mt-1">Chroma or FAISS</p>
+                    </div>
+                    <div class="divider"><i class="fa-solid fa-arrow-down"></i></div>
+                    <div class="node p-3 bg-teal-500/5 border-teal-500/30">
+                        <p class="stage-label-w3 mb-1">2nd: LLM Reranker</p>
+                        <p class="text-xs text-slate-200">_check_relevance()</p>
+                        <p class="text-[10px] text-slate-500 mt-1">LLM이 관련성 직접 판단</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- W3: Generation -->
+            <div class="card p-5 border-l-4 border-red-600 same-highlight">
+                <p class="section-header">Stage 3 · Generation</p>
+                <div class="space-y-2">
+                    <div class="node p-3">
+                        <p class="stage-label-w3 mb-1">RunnableWithMessageHistory</p>
+                        <p class="text-xs text-slate-200">Context + History + LLM</p>
+                        <p class="text-[10px] text-slate-500 mt-1">Streaming output</p>
+                    </div>
+                    <div class="divider"><i class="fa-solid fa-arrow-down"></i></div>
+                    <div class="node p-3 border-dashed border-red-500/40 bg-red-500/5">
+                        <p class="stage-label-w3 mb-1">Post-Validation</p>
+                        <p class="text-xs text-slate-200">_evaluate_answer_quality()</p>
+                        <p class="text-[10px] text-red-400 mt-1">Fail → 답변 교체 (Fallback)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- W3: Memory -->
+            <div class="card p-5 border-l-4 border-green-600 same-highlight">
+                <p class="section-header">Persistence · Memory</p>
+                <div class="space-y-2">
+                    <div class="node p-3">
+                        <p class="stage-label-w3 mb-1">SummarizedSQLiteHistory</p>
+                        <p class="text-xs text-slate-200">chat_history_rag.db</p>
+                        <p class="text-[10px] text-slate-500 mt-1">Threshold 6 → Auto Summary</p>
+                    </div>
+                    <div class="node p-3 opacity-60">
+                        <p class="stage-label-w3 mb-1">Agentic (Experimental)</p>
+                        <p class="text-xs text-slate-200">create_agent + InMemorySaver</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ══════════════════ W4 Column ══════════════════ -->
+        <div class="space-y-4">
+            <div class="flex items-center gap-3 mb-2">
+                <span class="bg-emerald-700 text-white text-[10px] px-3 py-1 rounded-full font-black">W4</span>
+                <div>
+                    <p class="text-white font-bold text-sm">KTS Contextual Retrieval RAG</p>
+                    <p class="text-slate-500 text-xs">002_etfbot/homework · 2026.03.07</p>
+                </div>
+            </div>
+
+            <!-- W4: Indexing -->
+            <div class="card p-5 border-l-4 border-emerald-500 diff-highlight">
+                <div class="flex items-center gap-2 mb-3">
+                    <p class="section-header mb-0">Stage 0 · Indexing (Offline)</p>
+                    <span class="badge-new">NEW: Context Generation</span>
+                </div>
+                <div class="space-y-2">
+                    <div class="node p-3">
+                        <p class="stage-label-w4 mb-1">Document</p>
+                        <p class="text-xs text-slate-200">KTS 접속인프라 안내자료 (OCR Text, 60K자)</p>
+                    </div>
+                    <div class="divider"><i class="fa-solid fa-arrow-down"></i></div>
+                    <div class="node p-3">
+                        <p class="stage-label-w4 mb-1">Chunking</p>
+                        <p class="text-xs text-slate-200">RecursiveCharacterTextSplitter (size=600)</p>
+                        <p class="text-[10px] text-slate-500 mt-1">140개 청크</p>
+                    </div>
+                    <div class="divider"><i class="fa-solid fa-arrow-down"></i></div>
+                    <!-- Context Generation: NEW -->
+                    <div class="node p-3 bg-emerald-500/10 border-emerald-500/40">
+                        <div class="flex items-center gap-2 mb-1">
+                            <p class="stage-label-w4">LLM Context Generation</p>
+                            <span class="badge-new">NEW</span>
+                        </div>
+                        <p class="text-xs text-slate-200">gpt-4.1-nano batch (max_concurrency=5)</p>
+                        <p class="text-[10px] text-slate-500 mt-1">청크당 50-100자 맥락 설명 생성</p>
+                        <p class="text-[10px] text-emerald-400 mt-1">→ contexts_cache.json 저장 (재생성 방지)</p>
+                    </div>
+                    <div class="divider"><i class="fa-solid fa-arrow-down"></i></div>
+                    <div class="grid grid-cols-2 gap-2">
+                        <div class="node p-3">
+                            <p class="stage-label-w4 mb-1">Normal Index</p>
+                            <p class="text-xs text-slate-200">원본 청크 임베딩</p>
+                        </div>
+                        <div class="node p-3 bg-emerald-500/5 border-emerald-500/20">
+                            <p class="stage-label-w4 mb-1">Contextual Index</p>
+                            <p class="text-xs text-slate-200">[맥락]+청크 임베딩</p>
+                        </div>
+                    </div>
+                    <div class="node p-3 mt-1">
+                        <div class="flex items-center gap-2 mb-1">
+                            <p class="stage-label-w4">Multi-Model Vector DB</p>
+                            <span class="badge-new">NEW</span>
+                        </div>
+                        <p class="text-xs text-slate-200">Chroma / FAISS 선택</p>
+                        <p class="text-[10px] text-slate-500 mt-1">모델×컬렉션별 디스크 캐시 (./kts_vector_db/{type}/{model}/{key}/)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- W4: Query -->
+            <div class="card p-5 border-l-4 border-slate-600">
+                <p class="section-header">Stage 1 · Query</p>
+                <div class="node p-3">
+                    <p class="stage-label-w4 mb-1">User Input</p>
+                    <p class="text-xs text-slate-200">Query + Session ID</p>
+                    <p class="text-[10px] text-slate-500 mt-1">MetadataFilter 없음 — Hybrid 검색이 커버</p>
+                </div>
+            </div>
+
+            <!-- W4: Retrieval -->
+            <div class="card p-5 border-l-4 border-emerald-500 diff-highlight">
+                <div class="flex items-center gap-2 mb-3">
+                    <p class="section-header mb-0">Stage 2 · Hybrid Retrieval</p>
+                    <span class="badge-new">NEW: BM25 + Hybrid</span>
+                </div>
+                <div class="space-y-2">
+                    <!-- 6 variants -->
+                    <div class="node p-3 bg-emerald-500/5 border-emerald-500/20">
+                        <div class="flex items-center gap-2 mb-2">
+                            <p class="stage-label-w4">6가지 Retriever 조합</p>
+                            <span class="badge-new">NEW</span>
+                        </div>
+                        <div class="grid grid-cols-3 gap-1 text-center">
+                            <div class="bg-slate-800/60 rounded p-1"><p class="text-[9px] text-slate-400">Normal<br/>Embedding</p></div>
+                            <div class="bg-slate-800/60 rounded p-1"><p class="text-[9px] text-slate-400">Normal<br/>BM25</p></div>
+                            <div class="bg-slate-800/60 rounded p-1"><p class="text-[9px] text-slate-400">Normal<br/>Hybrid</p></div>
+                            <div class="bg-emerald-900/40 rounded p-1 border border-emerald-800/50"><p class="text-[9px] text-emerald-300">Contextual<br/>Embedding</p></div>
+                            <div class="bg-emerald-900/40 rounded p-1 border border-emerald-800/50"><p class="text-[9px] text-emerald-300">Contextual<br/>BM25</p></div>
+                            <div class="bg-emerald-900/40 rounded p-1 border border-emerald-800/50"><p class="text-[9px] text-emerald-300">Contextual<br/>Hybrid</p></div>
+                        </div>
+                        <p class="text-[10px] text-slate-500 mt-2">BM25: Kiwipiepy 한국어 형태소 분석</p>
+                        <p class="text-[10px] text-slate-500">Hybrid: EnsembleRetriever (RRF, 가중치 조정 가능)</p>
+                    </div>
+                    <div class="divider"><i class="fa-solid fa-arrow-down"></i></div>
+                    <!-- Reranker -->
+                    <div class="node p-3 bg-emerald-500/5 border-emerald-500/20">
+                        <div class="flex items-center gap-2 mb-1">
+                            <p class="stage-label-w4">CrossEncoder Reranker (Optional)</p>
+                            <span class="badge-new">NEW</span>
+                        </div>
+                        <p class="text-xs text-slate-200">BAAI/bge-reranker-v2-m3</p>
+                        <p class="text-[10px] text-slate-500 mt-1">k=5 후보 → top-3 재선택</p>
+                        <p class="text-[10px] text-emerald-400 mt-1">실험 결과: +10%p HitRate, +0.100 MRR</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- W4: Generation -->
+            <div class="card p-5 border-l-4 border-red-600">
+                <div class="flex items-center gap-2 mb-3">
+                    <p class="section-header mb-0">Stage 3 · Generation</p>
+                    <span class="badge-improved">IMPROVED: Validation</span>
+                </div>
+                <div class="space-y-2">
+                    <div class="node p-3">
+                        <div class="flex items-center gap-2 mb-1">
+                            <p class="stage-label-w4">RunnableWithMessageHistory</p>
+                            <span class="badge-same">SAME</span>
+                        </div>
+                        <p class="text-xs text-slate-200">Context + History + LLM</p>
+                        <p class="text-[10px] text-slate-500 mt-1">Streaming output</p>
+                        <p class="text-[10px] text-emerald-400 mt-1">프롬프트 강화: OCR 불규칙 포맷 대응</p>
+                    </div>
+                    <div class="divider"><i class="fa-solid fa-arrow-down"></i></div>
+                    <div class="node p-3 border-dashed border-yellow-500/40 bg-yellow-500/5">
+                        <div class="flex items-center gap-2 mb-1">
+                            <p class="stage-label-w4" style="color:#fbbf24">Post-Validation</p>
+                            <span class="badge-improved">IMPROVED</span>
+                        </div>
+                        <p class="text-xs text-slate-200">AnswerQualityOutput (structured)</p>
+                        <p class="text-[10px] text-yellow-400 mt-1">Fail → 원본 답변 유지 + ⚠️ 경고 한 줄</p>
+                        <p class="text-[10px] text-slate-500 mt-1 line-through">W3: Fail → 답변 교체</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- W4: Memory -->
+            <div class="card p-5 border-l-4 border-green-600 same-highlight">
+                <div class="flex items-center gap-2 mb-3">
+                    <p class="section-header mb-0">Persistence · Memory</p>
+                    <span class="badge-same">SAME</span>
+                </div>
+                <div class="space-y-2">
+                    <div class="node p-3">
+                        <p class="stage-label-w4 mb-1">SummarizedSQLiteHistory</p>
+                        <p class="text-xs text-slate-200">kts_chat_history.db</p>
+                        <p class="text-[10px] text-slate-500 mt-1">Threshold 6 → Auto Summary</p>
+                    </div>
+                    <div class="node p-3 opacity-60">
+                        <p class="stage-label-w4 mb-1">Agentic (Experimental)</p>
+                        <p class="text-xs text-slate-200">create_agent + InMemorySaver</p>
+                        <p class="text-[10px] text-slate-500 mt-1">Tool: search_kts_document</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom: Key Differences Summary -->
+    <section class="mt-12 card p-8">
+        <h2 class="text-lg font-black text-white mb-6">핵심 차이 요약</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="node p-5 diff-highlight">
+                <div class="flex items-center gap-2 mb-3">
+                    <i class="fa-solid fa-layer-group text-emerald-400"></i>
+                    <p class="text-sm font-bold text-white">인덱싱 파이프라인</p>
+                    <span class="badge-new">NEW</span>
+                </div>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    W3는 청크를 그대로 임베딩.<br/>
+                    W4는 <strong class="text-emerald-400">LLM이 각 청크에 50-100자 맥락 설명을 생성</strong>한 뒤 임베딩 →
+                    맥락형 쿼리에서 HitRate +20%p 향상.
+                </p>
+            </div>
+            <div class="node p-5 diff-highlight">
+                <div class="flex items-center gap-2 mb-3">
+                    <i class="fa-solid fa-magnifying-glass text-emerald-400"></i>
+                    <p class="text-sm font-bold text-white">검색 방식</p>
+                    <span class="badge-new">NEW</span>
+                </div>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    W3: Embedding 단일 검색 + LLM Reranker.<br/>
+                    W4: <strong class="text-emerald-400">BM25(Kiwi) + Embedding Hybrid(RRF)</strong>로 키워드·의미 검색 병행.
+                    CrossEncoder Reranker 추가 시 +10%p HitRate.
+                </p>
+            </div>
+            <div class="node p-5 border-l-3 border-yellow-500" style="border-left: 3px solid #fbbf24">
+                <div class="flex items-center gap-2 mb-3">
+                    <i class="fa-solid fa-shield-check text-yellow-400"></i>
+                    <p class="text-sm font-bold text-white">품질 평가 처리</p>
+                    <span class="badge-improved">IMPROVED</span>
+                </div>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    W3: 품질 fail 시 LLM 답변을 버리고 fallback 메시지로 교체.<br/>
+                    W4: <strong class="text-yellow-400">원본 답변 유지 + ⚠️ 경고 한 줄 추가</strong>.
+                    사용자 정보 손실 방지.
+                </p>
+            </div>
+        </div>
+
+        <!-- Experiment Results -->
+        <div class="mt-6 p-5 bg-slate-900/50 rounded-xl border border-slate-800">
+            <p class="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">W4 실험 결과 (KTS 문서, eval_set 10개)</p>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                <div>
+                    <p class="text-2xl font-black text-emerald-400">+20%p</p>
+                    <p class="text-[10px] text-slate-400 mt-1">맥락형 HitRate<br/>(Contextual Embedding vs Normal)</p>
+                </div>
+                <div>
+                    <p class="text-2xl font-black text-emerald-400">Emb 0.7</p>
+                    <p class="text-[10px] text-slate-400 mt-1">최적 Hybrid 가중치<br/>(BM25 0.3)</p>
+                </div>
+                <div>
+                    <p class="text-2xl font-black text-yellow-400">+10%p</p>
+                    <p class="text-[10px] text-slate-400 mt-1">Reranker 적용 시<br/>HitRate 향상</p>
+                </div>
+                <div>
+                    <p class="text-2xl font-black text-blue-400">70% / 0.700</p>
+                    <p class="text-[10px] text-slate-400 mt-1">최고 파이프라인<br/>(Contextual + Reranker k=5)</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-8 pt-6 border-t border-slate-800 flex flex-wrap justify-between items-center gap-2 text-[10px] text-slate-600 font-bold uppercase tracking-widest">
+        <span>W3 · Housing FAQ Chatbot · 2026.02.28</span>
+        <span class="text-slate-700">→ Evolution →</span>
+        <span>W4 · KTS Contextual Retrieval · 2026.03.07</span>
+    </footer>
+
+</body>
+</html>
